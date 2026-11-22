@@ -7,3 +7,4 @@ Pillow
 importlib-resources
 streamlit
 opencv-python-headless
+streamlit-drawable-canvas[image]==0.13.0
