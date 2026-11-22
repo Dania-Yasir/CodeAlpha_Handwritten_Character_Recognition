@@ -21,33 +21,39 @@ st.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
-    :root { --bg:#090d1a; --card:#131b2f; --line:#26314b; --muted:#a5b4cd; --accent:#8b7cf6; }
-    .stApp { background: radial-gradient(ellipse at 70% -10%, #18254b 0%, #090d1a 52%); color:#f2f5ff; font-family:'DM Sans',sans-serif; }
+    :root { --bg:#071510; --card:#10251d; --line:#27513f; --muted:#a7c8b6; --accent:#34d399; }
+    .stApp { background: radial-gradient(ellipse at 70% -10%, #123d30 0%, #071510 52%); color:#f0fdf4; font-family:'DM Sans',sans-serif; }
     header[data-testid="stHeader"] { background:transparent; }
     .block-container { max-width:1140px; padding-top:2.2rem; padding-bottom:4rem; }
-    h1, h2, h3 { font-family:'Space Grotesk',sans-serif; color:#f4f6ff!important; }
-    p, label { color:#d0d9ed; }
-    .brand { color:#c5bdff; font-size:.85rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; }
-    .hero-title { font-family:'Space Grotesk',sans-serif; font-size:clamp(2.4rem,5vw,4.3rem); font-weight:700; line-height:1.09; letter-spacing:-.05em; margin:.6rem 0 1rem; color:#f5f6ff; }
-    .gradient-text { background:linear-gradient(90deg,#a594ff,#69d4f5); color:transparent; background-clip:text; -webkit-background-clip:text; }
-    .lead { color:#b4c2dc; font-size:1.06rem; max-width:700px; line-height:1.7; }
-    .pill { display:inline-block; background:#182342; border:1px solid #34446d; color:#c7d3ff; border-radius:99px; padding:.35rem .8rem; font-size:.83rem; margin-right:.4rem; margin-bottom:.5rem; }
-    .section-title { font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; margin:1.8rem 0 1rem; color:#f4f6ff; }
-    .stat { background:linear-gradient(145deg,#17213b,#10192c); border:1px solid #2a3652; border-radius:18px; padding:1rem 1.25rem; min-height:100px; }
-    .stat-number { font-family:'Space Grotesk',sans-serif; font-size:1.75rem; font-weight:700; color:#f7f7ff; }
-    .stat-label { color:#a6b7d4; font-size:.85rem; margin-top:.3rem; }
-    .pane-title { font-family:'Space Grotesk',sans-serif; font-size:1.15rem; font-weight:700; margin:.25rem 0 .5rem; color:#f4f6ff; }
-    .pane-sub { font-size:.9rem; color:#a6b7d4; margin-bottom:1rem; }
-    .result-card { background:linear-gradient(135deg,#1a2542,#151e35); border:1px solid #48538a; border-radius:18px; padding:1.4rem; text-align:center; }
-    .result-char { font-family:'Space Grotesk',sans-serif; font-size:5rem; font-weight:700; line-height:1.15; color:#ac9dff; overflow-wrap:anywhere; }
-    .result-label { color:#aabbd7; font-size:.85rem; text-transform:uppercase; letter-spacing:.1em; }
-    .foot { text-align:center; color:#8494b1; font-size:.82rem; padding-top:2rem; }
-    div[data-testid="stVerticalBlockBorderWrapper"] { background:#11192c; border-color:#293654!important; border-radius:20px; }
-    .stButton>button[kind="primary"] { background:linear-gradient(90deg,#7866ee,#497de5); color:white; border:0; border-radius:11px; font-weight:700; min-height:3.05rem; }
-    .stButton>button { border-radius:11px; }
+    h1, h2, h3 { font-family:'Space Grotesk',sans-serif; color:#f0fdf4!important; }
+    p, label { color:#d1e9db; }
+    .brand { color:#6ee7b7; font-size:.85rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; }
+    .hero-title { font-family:'Space Grotesk',sans-serif; font-size:clamp(2.4rem,5vw,4.3rem); font-weight:700; line-height:1.09; letter-spacing:-.05em; margin:.6rem 0 1rem; color:#f0fdf4; }
+    .gradient-text { background:linear-gradient(90deg,#34d399,#a3e635); color:transparent; background-clip:text; -webkit-background-clip:text; }
+    .lead { color:#b7d7c4; font-size:1.06rem; max-width:700px; line-height:1.7; }
+    .pill { display:inline-block; background:#133527; border:1px solid #2f7654; color:#b3f2d0; border-radius:99px; padding:.35rem .8rem; font-size:.83rem; margin-right:.4rem; margin-bottom:.5rem; }
+    .section-title { font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; margin:1.8rem 0 1rem; color:#f0fdf4; }
+    .stat { background:linear-gradient(145deg,#153327,#0b2119); border:1px solid #28513e; border-radius:18px; padding:1rem 1.25rem; min-height:100px; }
+    .stat-number { font-family:'Space Grotesk',sans-serif; font-size:1.75rem; font-weight:700; color:#f2fff5; }
+    .stat-label { color:#9ac4ac; font-size:.85rem; margin-top:.3rem; }
+    .pane-title { font-family:'Space Grotesk',sans-serif; font-size:1.15rem; font-weight:700; margin:.25rem 0 .5rem; color:#f0fdf4; }
+    .pane-sub { font-size:.9rem; color:#9ac4ac; margin-bottom:1rem; }
+    .result-card { background:linear-gradient(135deg,#163a2c,#0f291f); border:1px solid #33845b; border-radius:18px; padding:1.4rem; text-align:center; }
+    .result-char { font-family:'Space Grotesk',sans-serif; font-size:5rem; font-weight:700; line-height:1.15; color:#6ee7b7; overflow-wrap:anywhere; }
+    .result-label { color:#9ccbb1; font-size:.85rem; text-transform:uppercase; letter-spacing:.1em; }
+    .foot { text-align:center; color:#82ab93; font-size:.82rem; padding-top:2rem; }
+    div[data-testid="stVerticalBlockBorderWrapper"] { background:#0e251c; border-color:#29533e!important; border-radius:20px; }
+    .stButton>button[kind="primary"] { background:linear-gradient(90deg,#059669,#16a34a); color:white; border:0; border-radius:11px; font-weight:700; min-height:3.05rem; }
+    .stButton>button { border-radius:11px; border-color:#32654d; }
+    .stButton>button:hover { border-color:#34d399; color:#a7f3d0; }
+    .stButton>button[kind="primary"]:hover { background:linear-gradient(90deg,#047857,#15803d); color:#ffffff; }
+    div[data-testid="stProgress"] > div > div { background-color:#10b981; }
+    div[data-testid="stSlider"] [role="slider"] { background-color:#10b981; }
+    a { color:#6ee7b7; }
+    a:hover { color:#a3e635; }
     div[data-testid="stFileUploader"] { border-radius:14px; }
-    div[data-testid="stMetric"] { background:#111b32; border:1px solid #2d3a57; padding:.8rem 1rem; border-radius:12px; }
-    div[data-testid="stRadio"] label { color:#dce6fa; }
+    div[data-testid="stMetric"] { background:#102b20; border:1px solid #2d5f46; padding:.8rem 1rem; border-radius:12px; }
+    div[data-testid="stRadio"] label { color:#d9fbe5; }
     @media(max-width:640px) { .block-container { padding-left:1rem; padding-right:1rem; padding-top:1.4rem; } .hero-title {font-size:2.4rem;} }
     </style>
     """,
