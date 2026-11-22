@@ -57,86 +57,101 @@ balanced_characters = (
 # 4. IMAGE PREPROCESSING
 # =====================================
 
+
 def preprocess_image(image):
 
-    # Convert image to RGB
+    import cv2
+    import numpy as np
+    from PIL import Image
+
+    # 1. Convert image to grayscale
     image = image.convert("RGB")
+    gray = cv2.cvtColor(
+        np.array(image),
+        cv2.COLOR_RGB2GRAY
+    )
 
-    # Convert to grayscale
-    gray = ImageOps.grayscale(image)
+    # 2. Reduce noise
+    blurred = cv2.GaussianBlur(
+        gray, (5, 5), 0
+    )
 
-    # Convert to NumPy
-    arr = np.array(gray)
+    # 3. Detect foreground using adaptive thresholding
+    binary = cv2.adaptiveThreshold(
+        blurred,
+        255,
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY_INV,
+        31,
+        15
+    )
 
-    # Estimate background from image borders
-    border = np.concatenate([
-        arr[0, :],
-        arr[-1, :],
-        arr[:, 0],
-        arr[:, -1]
-    ])
+    # 4. Find contours
+    contours, _ = cv2.findContours(
+        binary,
+        cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE
+    )
 
-    background = np.median(border)
-
-    # Convert to white character on black background
-    if background > 127:
-        image = ImageOps.invert(gray)
-    else:
-        image = gray.copy()
-
-    # Enhance contrast
-    enhancer = ImageEnhance.Contrast(image)
-    image = enhancer.enhance(2.0)
-
-    # Remove weak background pixels
-    arr = np.array(image)
-    arr[arr < 70] = 0
-
-    image = Image.fromarray(arr)
-
-    # Detect character bounding box
-    bbox = image.getbbox()
-
-    if bbox is None:
+    if not contours:
         raise ValueError(
             "No handwritten character detected."
         )
 
-    # Crop character
-    image = image.crop(bbox)
-
-    # Resize while preserving aspect ratio
-    image.thumbnail(
-        (20, 20),
-        Image.Resampling.LANCZOS
+    # 5. Select largest detected contour
+    contour = max(
+        contours,
+        key=cv2.contourArea
     )
 
-    # Create black canvas
-    canvas = Image.new(
-        "L",
+    # 6. Get character bounding box
+    x, y, w, h = cv2.boundingRect(contour)
+
+    # 7. Crop character
+    cropped = binary[y:y+h, x:x+w]
+
+    # 8. Resize while preserving aspect ratio
+    target_size = 20
+
+    scale = target_size / max(w, h)
+
+    new_w = max(1, int(w * scale))
+    new_h = max(1, int(h * scale))
+
+    resized = cv2.resize(
+        cropped,
+        (new_w, new_h),
+        interpolation=cv2.INTER_AREA
+        if scale < 1
+        else cv2.INTER_LINEAR
+    )
+
+    # 9. Create black 28x28 canvas
+    canvas = np.zeros(
         (28, 28),
-        color=0
+        dtype=np.uint8
     )
 
-    # Center character
-    x = (28 - image.width) // 2
-    y = (28 - image.height) // 2
+    # 10. Center the character
+    x_offset = (28 - new_w) // 2
+    y_offset = (28 - new_h) // 2
 
-    canvas.paste(image, (x, y))
+    canvas[
+        y_offset:y_offset+new_h,
+        x_offset:x_offset+new_w
+    ] = resized
 
-    # Normalize pixels
+    # 11. Normalize
     img_array = (
-        np.array(canvas, dtype=np.float32)
-        / 255.0
+        canvas.astype(np.float32) / 255.0
     )
 
-    # Add batch and channel dimensions
+    # 12. Prepare CNN input
     img_array = img_array.reshape(
         1, 28, 28, 1
     )
 
-    return img_array, canvas
-
+    return img_array, Image.fromarray(canvas)
 
 # =====================================
 # 5. IMAGE UPLOAD
