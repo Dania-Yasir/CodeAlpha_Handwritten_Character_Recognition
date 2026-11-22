@@ -6,3 +6,4 @@ scikit-learn
 Pillow
 importlib-resources
 streamlit
+opencv-python-headless
