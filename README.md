@@ -12,7 +12,17 @@ The system is designed to recognize handwritten digits and English characters us
 - **EMNIST Balanced:** Handwritten digits and English letters across 47 classes.
 
 The project covers data preprocessing, CNN model development, training, evaluation, error analysis, and custom handwriting prediction.
+## 🌐 Live Demo
 
+Try the Handwritten Character Recognition application online!
+
+**Live Application:** https://handwriting-recognition-ai.streamlit.app/
+
+The application allows users to:
+- Draw handwritten characters directly.
+- Upload images containing handwritten letters or digits.
+- View predictions from the trained CNN model.
+- Explore confidence scores and alternative predictions.
 ##  Project Objectives
 
 - Develop CNN models for handwritten character classification.
