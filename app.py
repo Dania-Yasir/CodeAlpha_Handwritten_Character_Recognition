@@ -2,6 +2,7 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+from streamlit_drawable_canvas import st_canvas
 
 from PIL import Image, ImageOps, ImageEnhance
 
@@ -153,43 +154,104 @@ def preprocess_image(image):
 
     return img_array, Image.fromarray(canvas)
 
-# =====================================
-# 5. IMAGE UPLOAD
+\
+
+ # =====================================
+# 5. INPUT METHOD
 # =====================================
 
-uploaded_file = st.file_uploader(
-    "📤 Upload Handwritten Character",
-    type=["png", "jpg", "jpeg"]
+st.subheader("Choose Input Method")
+
+input_method = st.radio(
+    "How would you like to enter a character?",
+    ["📤 Upload Image", "✍️ Draw Character"],
+    horizontal=True
 )
 
+input_image = None
 
-if uploaded_file is not None:
+# =====================================
+# 6. UPLOAD IMAGE
+# =====================================
 
-    original_image = Image.open(uploaded_file)
+if input_method == "📤 Upload Image":
 
-    st.subheader("🖼️ Original Image")
-
-    st.image(
-        original_image,
-        width=250
+    uploaded_file = st.file_uploader(
+        "Upload a handwritten character",
+        type=["png", "jpg", "jpeg"]
     )
 
-    st.warning(
-        "For best results, upload an image "
-        "containing one handwritten character "
-        "on a plain background."
+    if uploaded_file is not None:
+
+        input_image = Image.open(uploaded_file).convert("RGB")
+
+        st.image(
+            input_image,
+            caption="Original Image",
+            width=250
+        )
+
+
+# =====================================
+# 7. DRAW CHARACTER
+# =====================================
+
+else:
+
+    st.write("Draw one character using your mouse or finger.")
+
+    stroke_width = st.slider(
+        "Pen Size",
+        min_value=5,
+        max_value=25,
+        value=14
     )
 
-    # =====================================
-    # 6. PREDICTION
-    # =====================================
+    canvas_result = st_canvas(
+        stroke_width=stroke_width,
+        stroke_color="#000000",
+        background_color="#FFFFFF",
+        drawing_mode="freedraw",
+        height=280,
+        width=280,
+        return_image_data=True,
+        key="drawing_canvas"
+    )
 
-    if st.button("🔍 Recognize Character"):
+    if canvas_result.image_data is not None:
+
+        drawing = canvas_result.image_data.astype(np.uint8)
+
+        input_image = Image.fromarray(
+            drawing,
+            mode="RGBA"
+        ).convert("RGB")
+
+        gray_check = np.array(
+            input_image.convert("L")
+        )
+
+        # Ignore an empty canvas
+        if np.min(gray_check) > 240:
+            input_image = None
+
+
+# =====================================
+# 8. CHARACTER RECOGNITION
+# =====================================
+
+if input_image is not None:
+
+    if st.button(
+        "🔍 Recognize Character",
+        type="primary",
+        use_container_width=True
+    ):
 
         try:
 
             processed_array, processed_image = (
-                preprocess_image(original_image)
+                preprocess_image(input_image)
             )
 
             st.subheader("⚙️ Processed Image")
@@ -202,15 +264,12 @@ if uploaded_file is not None:
                 width=280
             )
 
-            # Predict
             prediction = model.predict(
                 processed_array,
                 verbose=0
             )[0]
 
-            predicted_class = int(
-                np.argmax(prediction)
-            )
+            predicted_class = int(np.argmax(prediction))
 
             predicted_character = (
                 balanced_characters[predicted_class]
@@ -220,13 +279,9 @@ if uploaded_file is not None:
                 np.max(prediction) * 100
             )
 
-            # =====================================
-            # 7. DISPLAY RESULT
-            # =====================================
-
+            # Main prediction
             st.success(
-                f"Predicted Character: "
-                f"{predicted_character}"
+                f"Predicted Character: {predicted_character}"
             )
 
             st.metric(
@@ -234,10 +289,7 @@ if uploaded_file is not None:
                 f"{confidence:.2f}%"
             )
 
-            # =====================================
-            # 8. TOP 5 PREDICTIONS
-            # =====================================
-
+            # Top 5 predictions
             st.subheader("📊 Top 5 Predictions")
 
             top_indices = np.argsort(
@@ -254,30 +306,23 @@ if uploaded_file is not None:
                 for i in top_indices
             ]
 
-            fig, ax = plt.subplots(
-                figsize=(8, 4)
-            )
+            fig, ax = plt.subplots(figsize=(8, 4))
 
             ax.barh(
                 top_characters[::-1],
                 top_probabilities[::-1]
             )
 
-            ax.set_xlabel(
-                "Model Score (%)"
-            )
-
-            ax.set_title(
-                "Top 5 Character Predictions"
-            )
+            ax.set_xlabel("Model Score (%)")
+            ax.set_title("Top 5 Character Predictions")
 
             st.pyplot(fig)
+
             plt.close(fig)
 
             st.caption(
-                "Confidence is based on the model's "
-                "softmax output and is not a calibrated "
-                "probability of correctness."
+                "Model scores are softmax outputs, "
+                "not calibrated probabilities."
             )
 
         except Exception as e:
@@ -286,6 +331,12 @@ if uploaded_file is not None:
                 f"Unable to process image: {e}"
             )
 
+else:
+
+    st.info(
+        "Upload an image or draw a character "
+        "to start recognition."
+    )
 
 # =====================================
 # 9. ABOUT MODEL
