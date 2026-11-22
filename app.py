@@ -152,6 +152,7 @@ with left:
                 height=300,
                 key=f"canvas_{st.session_state.canvas_version}",
                 update_streamlit=True,
+                return_image_data=True,
             )
             if drawing.image_data is not None:
                 arr = drawing.image_data.astype(np.uint8)
